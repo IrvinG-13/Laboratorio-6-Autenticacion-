@@ -1,5 +1,8 @@
 <?php
 session_start();
+require 'csrf.php';
+
+$token = generarTokenCSRF();
 ?>
 
 <!DOCTYPE html>
@@ -7,30 +10,44 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="css/global.css">
 </head>
 <body>
 
-    <h2>Iniciar Sesión</h2>
+    <div class="contenedor">
 
-    <?php if (isset($_SESSION['mensaje'])): ?>
-        <p><?php echo $_SESSION['mensaje']; ?></p>
-        <?php unset($_SESSION['mensaje']); ?>
-    <?php endif; ?>
+        <h2>Iniciar Sesión</h2>
 
-    <form method="POST" action="login.php">
+        <?php if (isset($_SESSION['mensaje'])): ?>
+            <div class="mensaje mensaje-error">
+                <?php echo $_SESSION['mensaje']; ?>
+            </div>
+            <?php unset($_SESSION['mensaje']); ?>
+        <?php endif; ?>
 
-        <label>Correo electrónico:</label><br>
-        <input type="email" name="usuario" required><br><br>
+        <form method="POST" action="login.php">
 
-        <label>Contraseña:</label><br>
-        <input type="password" name="password" required><br><br>
+            <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
 
-        <button type="submit">Iniciar sesión</button>
+            <label>Correo electrónico:</label>
+            <input type="email" name="usuario" required>
 
-    </form>
+            <label>Contraseña:</label>
+            <input type="password" name="password" required>
 
-    <br>
-    <a href="registro_form.php">Crear cuenta</a>
+            <button type="submit">Iniciar sesión</button>
+
+        </form>
+
+        <div class="enlace">
+            <a href="registro_form.php">Crear cuenta</a>
+        </div>
+
+        <div class="enlace">
+            <a href="hash_test.php">Probar hash de contraseña</a>
+        </div>
+
+    </div>
 
 </body>
 </html>

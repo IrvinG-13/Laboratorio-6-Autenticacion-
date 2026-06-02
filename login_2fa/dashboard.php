@@ -1,7 +1,12 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['login_validado']) || $_SESSION['login_validado'] !== true) {
+if (
+    !isset($_SESSION['login_validado']) ||
+    $_SESSION['login_validado'] !== true ||
+    !isset($_SESSION['2fa_verificado']) ||
+    $_SESSION['2fa_verificado'] !== true
+) {
     header("Location: login_form.php");
     exit;
 }
@@ -15,15 +20,23 @@ $usuario = htmlspecialchars($_SESSION['usuario']);
 <head>
     <meta charset="UTF-8">
     <title>Panel Principal</title>
+    <link rel="stylesheet" href="css/global.css">
 </head>
 <body>
 
-    <h2>Bienvenido, <?php echo $nombre; ?></h2>
+    <div class="contenedor">
 
-    <p>Has iniciado sesión correctamente.</p>
-    <p>Usuario: <?php echo $usuario; ?></p>
+        <h2>Panel Principal</h2>
 
-    <a href="logout.php">Cerrar sesión</a>
+        <div class="info-usuario">
+            <p><strong>Bienvenido, <?php echo $nombre; ?></strong></p>
+            <p>Has iniciado sesión correctamente con autenticación 2FA.</p>
+            <p><strong>Usuario:</strong> <?php echo $usuario; ?></p>
+        </div>
+
+        <a class="btn-salir" href="logout.php">Cerrar sesión</a>
+
+    </div>
 
 </body>
 </html>

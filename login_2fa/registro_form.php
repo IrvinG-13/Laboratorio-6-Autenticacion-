@@ -1,5 +1,8 @@
 <?php
 session_start();
+require 'csrf.php';
+
+$token = generarTokenCSRF();
 ?>
 
 <!DOCTYPE html>
@@ -7,41 +10,85 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <title>Registro de Usuario</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/global.css">
 </head>
 <body>
 
-    <h2>Registro de Usuario</h2>
+    <div class="contenedor">
 
-    <?php if (isset($_SESSION['mensaje'])): ?>
-        <p><?php echo $_SESSION['mensaje']; ?></p>
-        <?php unset($_SESSION['mensaje']); ?>
-    <?php endif; ?>
+        <h2>Registro de Usuario</h2>
 
-    <form id="formRegistro" method="POST" action="procesar_registro.php">
+        <?php if (isset($_SESSION['mensaje'])): ?>
+            <div class="mensaje mensaje-info">
+                <?php echo $_SESSION['mensaje']; ?>
+            </div>
+            <?php unset($_SESSION['mensaje']); ?>
+        <?php endif; ?>
 
-        <label>Nombre:</label><br>
-        <input type="text" name="nombre" required><br><br>
+        <form id="formRegistro" method="POST" action="procesar_registro.php">
 
-        <label>Apellido:</label><br>
-        <input type="text" name="apellido" required><br><br>
+            <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
 
-        <label>Correo electrónico:</label><br>
-        <input type="email" name="usuario" required><br><br>
+            <label>Nombre:</label>
+            <input type="text" name="nombre" required>
 
-        <label>Contraseña:</label><br>
-        <input type="password" name="password" required><br><br>
+            <label>Apellido:</label>
+            <input type="text" name="apellido" required>
 
-        <label>Sexo:</label><br>
-        <select name="sexo" required>
-            <option value="">Seleccione</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
-        </select><br><br>
+            <label>Correo electrónico:</label>
+            <input type="email" name="usuario" id="usuario" required>
+            <small id="mensajeCorreo" class="ayuda"></small>
 
-        <button type="submit">Registrarse</button>
+            <label>Contraseña:</label>
+            <input type="password" name="password" required minlength="6">
 
-    </form>
+            <label>Confirmar contraseña:</label>
+            <input type="password" name="confirmar_password" required minlength="6">
+
+            <label>Sexo:</label>
+            <select name="sexo" required>
+                <option value="">Seleccione</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+            </select>
+
+            <button type="submit" id="btnRegistro">Registrarse</button>
+
+        </form>
+
+        <div class="enlace">
+            <a href="login_form.php">Ya tengo cuenta</a>
+        </div>
+
+    </div>
+
+    <script>
+        const campoCorreo = document.getElementById("usuario");
+        const mensajeCorreo = document.getElementById("mensajeCorreo");
+        const btnRegistro = document.getElementById("btnRegistro");
+
+        campoCorreo.addEventListener("blur", function () {
+            const correo = campoCorreo.value.trim();
+
+            if (correo === "") {
+                return;
+            }
+
+            fetch("verificar_correo.php?usuario=" + encodeURIComponent(correo))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.existe) {
+                        mensajeCorreo.textContent = "Este correo ya está registrado.";
+                        mensajeCorreo.className = "ayuda ayuda-error";
+                        btnRegistro.disabled = true;
+                    } else {
+                        mensajeCorreo.textContent = "Correo disponible.";
+                        mensajeCorreo.className = "ayuda ayuda-exito";
+                        btnRegistro.disabled = false;
+                    }
+                });
+        });
+    </script>
 
 </body>
 </html>
