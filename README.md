@@ -14,7 +14,8 @@ La tabla almacena los datos de cada usuario registrado. Los campos clave son `Ha
 ALTER TABLE `usuarios`
 ADD `secret_2fa` VARCHAR(255) NULL AFTER `HashMagic`;
 ```
-<img width="716" height="303" alt="image" src="https://github.com/user-attachments/assets/b86b2c32-8ad2-4205-87b6-61cfb9f647b1" />
+<img width="1600" height="676" alt="image" src="https://github.com/user-attachments/assets/3705ae98-3e5e-46fe-91a2-54367b158e41" />
+
 
 ### Paso 10 — Tabla `intentos_login`
 
